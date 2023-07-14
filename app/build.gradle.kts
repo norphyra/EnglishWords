@@ -98,6 +98,7 @@ dependencies {
         implementation(composeActivity)
         implementation(ktxLifecycle)
         implementation(serialization)
+        implementation(ktxViewModel)
     }
 }
 
