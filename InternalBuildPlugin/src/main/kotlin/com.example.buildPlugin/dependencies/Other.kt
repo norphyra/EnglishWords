@@ -11,6 +11,8 @@ object Other {
 
     const val ktxViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.ktxViewModel}"
 
+    const val ktxFragment = "androidx.fragment:fragment-ktx:${Versions.ktxFragment}"
+
     const val ktxLifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.ktxLifecycle}"
 
     const val bomCompose = "androidx.compose:compose-bom:${Versions.bomCompose}"

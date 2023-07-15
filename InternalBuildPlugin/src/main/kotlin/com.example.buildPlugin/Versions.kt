@@ -7,9 +7,11 @@ object Versions {
 
     const val ktxLifecycle = "2.6.1"
     const val ktxViewModel = "2.6.1"
+    const val ktxFragment = "1.6.0"
 
     const val bomCompose = "2023.06.01"
     const val compose = "1.4.3"
+    const val navigation = "2.6.0"
     const val composeMaterial3 = "1.1.1"
 
     const val dagger = "2.46.1"
@@ -21,7 +23,7 @@ object Versions {
     const val room = "2.5.2"
 
     //Test
-    const val espresso = "3.6.0-alpha01"
+    const val espresso = "3.5.1"
     const val extJunit = "1.1.5"
     const val junit = "4.13.2"
 }
