@@ -8,16 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.englishwordspetproject.screens.EducationScreen
 import com.example.englishwordspetproject.screens.HomeScreen
 import com.example.englishwordspetproject.screens.ProfileScreen
+import com.example.englishwordspetproject.screens.Screen
 import com.example.englishwordspetproject.ui.theme.EnglishWordspetProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,7 +27,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     MainScreen()
                 }
