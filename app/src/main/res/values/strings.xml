@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">EnglishWords(pet project)</string>
     <string name="home_screen">Home</string>
-    <string name="education_screen">Education</string>
+    <string name="training_screen">Training</string>
+    <string name="dictionary_screen">Dictionary</string>
     <string name="profile_screen">Profile</string>
+
+    <string name="my_dictionary">МОЙ СЛОВАРЬ</string>
+    <string name="my_sets">МОИ НАБОРЫ</string>
 </resources>
