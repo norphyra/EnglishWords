@@ -1,5 +1,6 @@
 package com.example.englishwordspetproject
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -17,12 +19,14 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,7 +61,8 @@ class MainActivity : ComponentActivity() {
                 //val activity = checkNotNull(LocalViewModelStoreOwner.current)
 
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize(),
                     color = MaterialTheme.colorScheme.surface
                 ) {
                     MainScreen()
@@ -77,8 +82,20 @@ fun MainScreen() {
 //    val showBottomSheet by viewModel.showBottomSheet.collectAsState()
 
     //val sheetState = rememberModalBottomSheetState()
+
+    val context = LocalContext.current
+
+    val screenHeight = context.resources.displayMetrics.heightPixels
+    val screenWidth = context.resources.displayMetrics.widthPixels
+
+    val mainColumnModifier = if (screenWidth + screenHeight > 4560) {
+        Modifier.padding(start = 60.dp, end = 60.dp, top = 60.dp, bottom = 60.dp)
+    } else {
+        Modifier.padding(20.dp)
+    }
     
-    Scaffold(bottomBar = { BottomAppBar(navController = navController)}) {
+    Scaffold(bottomBar = { BottomAppBar(navController = navController)},
+    modifier = mainColumnModifier) {
         NavHost(navController = navController, startDestination = Screen.DictionaryScreen.route,
             modifier = Modifier.padding(it)) {
             composable(Screen.HomeScreen.route) { HomeScreen() }

@@ -27,13 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PieChart(radius: Float, innerRadius: Float, padding: List<Dp>, textColor: Color, centerText: String, centerTextColor: Color, input: List<PieChartInput>) {
-    Column(
-    ){
+fun PieChart(radius: Float, innerRadius: Float, modifier: Modifier, textColor: Color, centerText: String, centerTextColor: Color, input: List<PieChartInput>) {
+    Column {
         PieChartDrawer(
-            modifier = Modifier
-                .size(radius.dp)
-                .padding(top = padding[0], start = padding[1], end = padding[2], bottom = padding[3]),
+            modifier = modifier.size(radius.dp),
             radius = radius * 1.3f,
             innerRadius = innerRadius,
             centerText = centerText,
@@ -59,7 +56,7 @@ fun PieChartDrawer(
         mutableStateOf(Offset.Zero)
     }
 
-    var inputList by remember {
+    val inputList by remember {
         mutableStateOf(input)
     }
 
@@ -162,7 +159,7 @@ fun PieChartDrawer(
 @Preview(showBackground = true)
 @Composable
 fun PieChartPreview() {
-    PieChart(230f, 100f, padding = listOf(0.dp,0.dp,0.dp,0.dp), centerText = "Some text", centerTextColor = Color.Black, textColor = Color.Black,
+    PieChart(230f, 100f, Modifier, centerText = "Some text", centerTextColor = Color.Black, textColor = Color.Black,
         input = listOf(
             PieChartInput(
                 color = Color.Green,

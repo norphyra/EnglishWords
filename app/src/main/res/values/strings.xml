@@ -5,6 +5,6 @@
     <string name="dictionary_screen">Dictionary</string>
     <string name="profile_screen">Profile</string>
 
-    <string name="my_dictionary">МОЙ СЛОВАРЬ</string>
-    <string name="my_sets">МОИ НАБОРЫ</string>
+    <string name="my_dictionary">Мой словарь</string>
+    <string name="my_sets">Мои наборы</string>
 </resources>

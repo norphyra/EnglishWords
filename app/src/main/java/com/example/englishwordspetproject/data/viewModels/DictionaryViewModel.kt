@@ -19,6 +19,7 @@ class DictionaryViewModel: BaseViewModel() {
 
     open public fun isExpand(isExpand: Boolean) {
         _expanded.value = isExpand
+        val a = ""
     }
 
 }
@@ -26,3 +27,9 @@ class DictionaryViewModel: BaseViewModel() {
 data class Section(@StringRes val sectionName: Int)
 
 val sections = listOf(Section(R.string.my_dictionary), Section(R.string.my_sets))
+
+val wordsMap = mapOf<String, List<String>>(
+    "A" to listOf("Aaaaaaaa", "Aaaaaaaa", "Aaaaaaaa"),
+    "B" to listOf("Bbbbbbbb", "Bbbbbbbb", "Bbbbbbbb"),
+    "C" to listOf("Cccccccc", "Cccccccc", "Cccccccc")
+)
