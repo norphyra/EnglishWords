@@ -85,17 +85,8 @@ fun MainScreen() {
 
     val context = LocalContext.current
 
-    val screenHeight = context.resources.displayMetrics.heightPixels
-    val screenWidth = context.resources.displayMetrics.widthPixels
-
-    val mainColumnModifier = if (screenWidth + screenHeight > 4560) {
-        Modifier.padding(start = 60.dp, end = 60.dp, top = 60.dp, bottom = 60.dp)
-    } else {
-        Modifier.padding(20.dp)
-    }
     
-    Scaffold(bottomBar = { BottomAppBar(navController = navController)},
-    modifier = mainColumnModifier) {
+    Scaffold(bottomBar = { BottomAppBar(navController = navController)}) {
         NavHost(navController = navController, startDestination = Screen.DictionaryScreen.route,
             modifier = Modifier.padding(it)) {
             composable(Screen.HomeScreen.route) { HomeScreen() }

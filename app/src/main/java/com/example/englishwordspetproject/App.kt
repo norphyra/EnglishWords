@@ -15,7 +15,3 @@ class App: Application() {
         appComponent = DaggerAppComponent.create()
     }
 }
-
-
-@Composable
-fun Int.pxToDp () = with(LocalDensity.current) { this@pxToDp.toDp() }

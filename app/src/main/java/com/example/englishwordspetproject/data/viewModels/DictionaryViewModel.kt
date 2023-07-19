@@ -1,6 +1,9 @@
 package com.example.englishwordspetproject.data.viewModels
 
 import androidx.annotation.StringRes
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import com.example.englishwordspetproject.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +15,9 @@ class DictionaryViewModel: BaseViewModel() {
 
     private val _expanded= MutableStateFlow(false)
     public val expanded: StateFlow<Boolean> = _expanded
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    public var sheetState: SheetState = SheetState(true)
 
     open public fun selectItem(item: Section) {
         _selectedItem.value = item
