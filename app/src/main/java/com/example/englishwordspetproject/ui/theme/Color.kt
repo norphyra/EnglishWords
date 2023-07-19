@@ -1,5 +1,8 @@
 package com.example.englishwordspetproject.ui.theme
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val Primary = Color(0xFF386a20)
@@ -29,3 +32,14 @@ val OnBackground = Color(0xFF1c1c16)
 
 val SurfaceContainer = Color(0xFFedefe5)
 val OnSurfaceContainer = Color(0xFF848c7c)
+
+//Icons clors
+val new_word_icon_color = Color(0xFFc4bebe)
+val in_progress_icon_color = Color(0xFFf0e516)
+val learned_icon_color = Color(0xFFa1ed2f)
+
+@Composable
+fun CustomTextFieldColors() =  TextFieldDefaults.colors(errorTextColor = MaterialTheme.colorScheme.error,
+    errorLeadingIconColor = MaterialTheme.colorScheme.error,
+    focusedIndicatorColor = Color.Transparent,
+    unfocusedIndicatorColor = Color.Transparent)
