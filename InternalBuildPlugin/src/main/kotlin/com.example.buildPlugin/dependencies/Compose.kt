@@ -10,4 +10,5 @@ object Compose {
     const val material3 = "androidx.compose.material3:material3:${Versions.composeMaterial3}"
     const val navigation = "androidx.navigation:navigation-compose:${Versions.navigation}"
     const val icons = "androidx.compose.material:material-icons-extended:${Versions.compose}"
+    const val windowSizeClass = "androidx.compose.material3:material3-window-size-class:${Versions.composeMaterial3}"
 }

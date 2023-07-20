@@ -5,10 +5,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-val Primary = Color(0xFF386a20)
+val Primary = Color(0xFFee6548)
 val OnPrimary = Color.White
 val PrimaryContainer = Color(0xFFb8f397)
-val OnPrimaryContainer =Color(0xFF042100)
+val OnPrimaryContainer = Color(0xFF042100)
 
 val Secondary = Color(0xFF55624c)
 val OnSecondary = Color.White
@@ -27,7 +27,7 @@ val OnOutline = Color(0xFFc4c8ba)
 val Surface = Color.White
 val OnSurface = Color(0xFF848c7c)
 
-val Background = Color.White
+val Background = Color(0xFFf9f1de)
 val OnBackground = Color(0xFF1c1c16)
 
 val SurfaceContainer = Color(0xFFedefe5)

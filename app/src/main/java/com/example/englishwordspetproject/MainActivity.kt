@@ -1,55 +1,45 @@
 package com.example.englishwordspetproject
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.rememberNavController
 import com.example.englishwordspetproject.DI.appComponent
-import com.example.englishwordspetproject.data.viewModels.BaseViewModel
-import com.example.englishwordspetproject.data.viewModels.sections
-import com.example.englishwordspetproject.screens.DictionaryScreen
-import com.example.englishwordspetproject.screens.EducationScreen
-import com.example.englishwordspetproject.screens.HomeScreen
-import com.example.englishwordspetproject.screens.ProfileScreen
-import com.example.englishwordspetproject.screens.Screen
+import com.example.englishwordspetproject.navigation.BottomNavigationBar
+import com.example.englishwordspetproject.navigation.BottomNavigationBarItem
+import com.example.englishwordspetproject.navigation.CustomNavHost
+import com.example.englishwordspetproject.navigation.Destinations
 import com.example.englishwordspetproject.ui.theme.EnglishWordspetProjectTheme
+import com.example.englishwordspetproject.utils.WindowSize
 
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,7 +55,10 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize(),
                     color = MaterialTheme.colorScheme.surface
                 ) {
-                    MainScreen()
+                    val windowSizeClass = calculateWindowSizeClass(this)
+                    WindowSize.windowSizeClass = windowSizeClass
+
+                    MainScreen(windowSizeClass)
                 }
             }
         }
@@ -74,57 +67,83 @@ class MainActivity : ComponentActivity() {
 
 //viewModelStoreOwner: ViewModelStoreOwner
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(windowSizeClass: WindowSizeClass) {
+
     val navController = rememberNavController()
 
-//    val showBottomSheet by viewModel.showBottomSheet.collectAsState()
+    val appState = AppState(navController, windowSizeClass)
 
-    //val sheetState = rememberModalBottomSheetState()
+    Scaffold(
+        containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        bottomBar = {
 
-    val context = LocalContext.current
+            BottomNavigation(destinations = appState.destinationsList,
+                onNavigateToDestination = appState::navigateToDestinationBottom,
+                currentDestination = appState.currentDestination)
 
-    
-    Scaffold(bottomBar = { BottomAppBar(navController = navController)}) {
-        NavHost(navController = navController, startDestination = Screen.DictionaryScreen.route,
-            modifier = Modifier.padding(it)) {
-            composable(Screen.HomeScreen.route) { HomeScreen() }
-            composable(Screen.TrainingScreen.route) { EducationScreen() }
-            composable(Screen.DictionaryScreen.route) { DictionaryScreen() }
-            composable(Screen.ProfileScreen.route) { ProfileScreen() }
-        }
-
-//        if (showBottomSheet) {
-//            ModalBottomSheet(onDismissRequest = viewModel::hideBottomSheet,
-//            sheetState = sheetState,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .fillMaxHeight(0.4f)) {
-//                Surface(shape = RoundedCornerShape(20.dp),
-//                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-//                    modifier = Modifier
-//                        .padding(top = 10.dp)
-//                        .clickable {
-//                            viewModel.selectItem(sections.find { it.sectionName != viewModel.selectedItem.value }!!.sectionName)
-//                        }
-//                ) {
-//                    Row(
-//                        Modifier
-//                            .fillMaxWidth(0.4f)
-//                            .padding(start = 30.dp, top = 10.dp, end = 30.dp, bottom = 10.dp), horizontalArrangement = Arrangement.SpaceBetween,
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        Text(text = stringResource(id = if (selectedSection == R.string.my_dictionary) R.string.my_sets else R.string.my_dictionary),
-//                            fontSize = 30.sp,
-//                            fontWeight = FontWeight.Bold,
-//                            textAlign = TextAlign.Center,
-//                            modifier = Modifier.fillMaxWidth(),
-//                            color = Color.Black.copy(alpha = 0.6f))
-//                    }
-//                }
+//            if (appState.shouldShowBottomBar) {
+//
+//                BottomNavigation(destinations = appState.destinationsList,
+//                    onNavigateToDestination = appState::navigateToDestinationBottom,
+//                    currentDestination = appState.currentDestination)
 //            }
-//        }
+        },
+    ) { padding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .consumeWindowInsets(padding)
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(
+                        WindowInsetsSides.Horizontal,
+                    ),
+                ),
+        ) {
+            CustomNavHost(navController = navController)
+        }
     }
 }
+
+@Composable
+private fun BottomNavigation(
+    destinations: List<Destinations>,
+    onNavigateToDestination: (Destinations) -> Unit,
+    currentDestination: NavDestination?,
+    modifier: Modifier = Modifier,
+) {
+    BottomNavigationBar(modifier = modifier
+    ) {
+        destinations.forEach {destination ->
+            val selected = currentDestination.isDestinationInHierarchy(destination)
+
+            BottomNavigationBarItem(selected = selected,
+                onClick = { onNavigateToDestination(destination) },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = destination.unselectedIcon),
+                        contentDescription = null,
+                    )
+                },
+                selectedIcon = {
+                    Icon(
+                        painter = painterResource(id = destination.selectedIcon),
+                        contentDescription = null,
+                    )
+                },
+                label = {Text(stringResource(destination.titleTextId))},
+                modifier = modifier
+            )
+        }
+    }
+}
+
+private fun NavDestination?.isDestinationInHierarchy(destination: Destinations) =
+    this?.hierarchy?.any {
+        it.route?.contains(destination.name, true) ?: false
+    } ?: false
 

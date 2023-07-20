@@ -2,6 +2,7 @@ package com.example.buildPlugin
 
 object Versions {
     const val ktxCore = "1.10.0"
+    const val trace = "1.1.0"
     const val bomKotlin = "1.9.0"
     const val composeActivity = "1.7.2"
 

@@ -19,4 +19,6 @@ object Other {
 
     const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
 
+    const val trace = "androidx.tracing:tracing:${Versions.trace}"
+
 }

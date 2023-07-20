@@ -68,6 +68,7 @@ dependencies {
         implementation(material3)
         implementation(navigation)
         implementation(icons)
+        implementation(windowSizeClass)
     }
 
     dep.di.apply {
@@ -103,6 +104,7 @@ dependencies {
         implementation(serialization)
         implementation(ktxViewModel)
         implementation(ktxFragment)
+        implementation(trace)
     }
 }
 

@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -25,8 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ExpandMore
-import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -35,8 +35,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass.Companion.Compact
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass.Companion.Medium
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,17 +46,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -69,12 +68,11 @@ import com.example.englishwordspetproject.data.viewModels.WordStatus
 import com.example.englishwordspetproject.data.viewModels.sections
 import com.example.englishwordspetproject.data.viewModels.words
 import com.example.englishwordspetproject.data.viewModels.wordsMap
-import com.example.englishwordspetproject.data.viewModels.wordsStatisticInDictionary
-import com.example.englishwordspetproject.ui.theme.CustomTextFieldColors
 import com.example.englishwordspetproject.ui.theme.in_progress_icon_color
 import com.example.englishwordspetproject.ui.theme.learned_icon_color
 import com.example.englishwordspetproject.ui.theme.new_word_icon_color
 import com.example.englishwordspetproject.utils.CalculatePaddings
+import com.example.englishwordspetproject.utils.WindowSize
 
 
 @Composable
@@ -91,89 +89,100 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
 
     val screenHeight = context.resources.displayMetrics.heightPixels
     val screenWidth = context.resources.displayMetrics.widthPixels
+
+    val mainColumnVerticalPaddingValues = when(WindowSize.windowSizeClass?.heightSizeClass) {
+        Compact -> 10.dp
+        else -> 30.dp
+    }
+
+    val mainColumnHorizontalPaddingValues = when(WindowSize.windowSizeClass?.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> 20.dp
+        WindowWidthSizeClass.Medium -> 100.dp
+        else -> 400.dp
+    }
     
     Box(modifier = Modifier
         .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = CalculatePaddings(screenHeight, screenWidth)
+            modifier = Modifier
+                .padding(horizontal = mainColumnHorizontalPaddingValues, vertical = mainColumnVerticalPaddingValues)
                 .fillMaxSize()
                 .verticalScroll(scrollState, enabled = true),
             horizontalAlignment = Start
         ) {
-            TextField(value = stringResource(id = selectedItem.sectionName),
-                onValueChange = {},
-                textStyle = TextStyle(fontSize = 20.sp),
-                readOnly = true,
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.top_section_picker_icon),
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp)) },
-                trailingIcon = { Icon(imageVector = Icons.Rounded.ExpandMore,
-                    contentDescription = "expand more",
-                    modifier = Modifier
-                        .padding(end = 20.dp)
-                        .size(24.dp)
-                        .clickable { dictionaryViewModel.isExpand(!expanded) })},
-                modifier = Modifier
-                    .align(Start)
-                    .width(420.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = TextFieldDefaults.colors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent))
-
-            Surface(shape = RoundedCornerShape(20.dp),
-                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                modifier = Modifier.padding(top = 40.dp, bottom = 5.dp)
+            Row(modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = stringResource(id = R.string.dictionary_statistics),
-                modifier = Modifier
-                    .align(Start)
-                    .padding(top = 6.dp, bottom = 6.dp, start = 10.dp, end = 10.dp),
-                color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(text = stringResource(id = R.string.my_dictionary),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp)
+                
+                Button(onClick = { /*TODO*/ },
+                       shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text(text = "Редактировать",
+                        modifier = Modifier.padding(10.dp))
+                }
             }
 
-            wordsStatisticInDictionary.entries.forEach {set ->
-                WordsStatistic(context, set.value.count, set.key)
+            Card(shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(10.dp),
+                modifier = Modifier.padding(top = 30.dp)
+            ) {
+                Text(text = "Все слова")
             }
 
-            var textFieldValue by rememberSaveable {
-                mutableStateOf("")
-            }
-
-            var isErrorText by rememberSaveable {
-                mutableStateOf(false)
-            }
-
-            var errorText by rememberSaveable {
-                mutableStateOf(R.string.empty_string)
-            }
-
-            TextField(value = textFieldValue,
-                onValueChange = {
-                    textFieldValue = it
-                    if (!inputTextValidation(it)) {
-                        isErrorText = true
-                        errorText =  R.string.supporting_error_text_search
-                    } else {
-                        isErrorText = false
-                        errorText =  R.string.empty_string
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp),
-                placeholder = { Text(text = stringResource(id = R.string.dictionary_text_field_search_placeholder))},
-                leadingIcon = {Icon(imageVector = Icons.Rounded.Search, contentDescription = null)},
-                singleLine = true,
-                isError = isErrorText,
-                supportingText = { Text(text = stringResource(id = errorText))},
-                colors = CustomTextFieldColors())
-
-//            LazyVerticalGrid(columns = GridCells.Adaptive(128.dp),
-//                contentPadding = PaddingValues(top = 8.dp)) {
-//
+//            Surface(shape = RoundedCornerShape(20.dp),
+//                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+//                modifier = Modifier.padding(top = 40.dp, bottom = 5.dp)
+//            ) {
+//                Text(text = stringResource(id = R.string.dictionary_statistics),
+//                modifier = Modifier
+//                    .align(Start)
+//                    .padding(top = 6.dp, bottom = 6.dp, start = 10.dp, end = 10.dp),
+//                color = MaterialTheme.colorScheme.onPrimaryContainer)
 //            }
-            InDictionaryWordItem()
+//
+//            wordsStatisticInDictionary.entries.forEach {set ->
+//                WordsStatistic(context, set.value.count, set.key)
+//            }
+//
+//            var textFieldValue by rememberSaveable {
+//                mutableStateOf("")
+//            }
+//
+//            var isErrorText by rememberSaveable {
+//                mutableStateOf(false)
+//            }
+//
+//            var errorText by rememberSaveable {
+//                mutableStateOf(R.string.empty_string)
+//            }
+//
+//            TextField(value = textFieldValue,
+//                onValueChange = {
+//                    textFieldValue = it
+//                    if (!inputTextValidation(it)) {
+//                        isErrorText = true
+//                        errorText =  R.string.supporting_error_text_search
+//                    } else {
+//                        isErrorText = false
+//                        errorText =  R.string.empty_string
+//                    }
+//                },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(top = 30.dp),
+//                placeholder = { Text(text = stringResource(id = R.string.dictionary_text_field_search_placeholder))},
+//                leadingIcon = {Icon(imageVector = Icons.Rounded.Search, contentDescription = null)},
+//                singleLine = true,
+//                isError = isErrorText,
+//                supportingText = { Text(text = stringResource(id = errorText))},
+//                colors = CustomTextFieldColors())
+
         }
     }
 
