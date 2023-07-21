@@ -23,6 +23,9 @@ class AppState(
     val shouldShowBottomBar: Boolean
         get() = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
 
+    val shouldShowNavRail: Boolean
+        get() = !shouldShowBottomBar
+
     /**
      * Map of top level destinations to be used in the BottomBar. The key is the
      * route.

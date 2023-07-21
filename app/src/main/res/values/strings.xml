@@ -7,10 +7,17 @@
 
     <string name="my_dictionary">Мой словарь</string>
     <string name="my_sets">Мои наборы</string>
-    <string name="dictionary_statistics">Статистика</string>
     <string name="new_word">новые</string>
     <string name="in_progress_word">изучаю</string>
     <string name="learned_word">изучено</string>
+    <string name="all_words">всего слов</string>
+
+    <string name="all_words_title">Все слова</string>
+    <string name="nouns_title">Существительные</string>
+    <string name="verbs_title">Глаголы</string>
+    <string name="adjectives_title">Прилагательные</string>
+    <string name="adverb_title">Наречия</string>
+    <string name="numerals_title">Числительные</string>
     
     <string name="dictionary_text_field_search_placeholder">Найти слово в словаре</string>
     <string name="supporting_error_text_search">Введите только буквы</string>

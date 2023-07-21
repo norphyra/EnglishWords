@@ -7,9 +7,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.graphics.Color
 import com.example.englishwordspetproject.R
-import com.example.englishwordspetproject.ui.theme.in_progress_icon_color
-import com.example.englishwordspetproject.ui.theme.learned_icon_color
-import com.example.englishwordspetproject.ui.theme.new_word_icon_color
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -36,7 +33,6 @@ class DictionaryViewModel: BaseViewModel() {
 }
 
 data class Section(@StringRes val sectionName: Int)
-data class WordsStatistic(val count: Int)
 
 data class WordsWithTranslate(val word: String, val translate: String, val status: WordStatus)
 
@@ -48,16 +44,20 @@ val wordsMap = mapOf<String, List<String>>(
     "C" to listOf("Cccccccc", "Cccccccc", "Cccccccc")
 )
 
-val wordsStatisticInDictionary = mapOf<@receiver:StringRes Int, WordsStatistic>(
-    R.string.new_word to WordsStatistic(120),
-    R.string.in_progress_word to WordsStatistic(34),
-    R.string.learned_word to WordsStatistic(394)
+val wordsStatisticInDictionary = mapOf<@receiver:StringRes Int, Int>(
+    R.string.new_word to 120,
+    R.string.in_progress_word to 34,
+    R.string.learned_word to 394,
+    R.string.all_words to 548
 )
 
 val words = listOf(WordsWithTranslate("cat", "кошка", WordStatus.New),
     WordsWithTranslate("dog", "собака", WordStatus.New),
     WordsWithTranslate("fish", "рыба", WordStatus.InProgress),
     WordsWithTranslate("illusion", "иллюзия", WordStatus.Learned))
+
+val cardTitles = listOf(R.string.all_words_title, R.string.nouns_title, R.string.verbs_title,
+R.string.adjectives_title, R.string.adverb_title, R.string.numerals_title)
 
 enum class WordStatus {
     New,

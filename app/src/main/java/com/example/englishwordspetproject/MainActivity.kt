@@ -1,10 +1,12 @@
 package com.example.englishwordspetproject
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +35,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.englishwordspetproject.DI.appComponent
 import com.example.englishwordspetproject.navigation.BottomNavigationBar
 import com.example.englishwordspetproject.navigation.BottomNavigationBarItem
+import com.example.englishwordspetproject.navigation.BottomNavigationRail
+import com.example.englishwordspetproject.navigation.BottomNavigationRailItem
 import com.example.englishwordspetproject.navigation.CustomNavHost
 import com.example.englishwordspetproject.navigation.Destinations
 import com.example.englishwordspetproject.ui.theme.EnglishWordspetProjectTheme
@@ -75,25 +80,22 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
 
     val appState = AppState(navController, windowSizeClass)
 
+    Log.d("MainActivity", "shouldShowBottomBar: ${appState.shouldShowBottomBar} ")
+
     Scaffold(
         containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onBackground,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
+            if (appState.shouldShowBottomBar) {
 
-            BottomNavigation(destinations = appState.destinationsList,
-                onNavigateToDestination = appState::navigateToDestinationBottom,
-                currentDestination = appState.currentDestination)
-
-//            if (appState.shouldShowBottomBar) {
-//
-//                BottomNavigation(destinations = appState.destinationsList,
-//                    onNavigateToDestination = appState::navigateToDestinationBottom,
-//                    currentDestination = appState.currentDestination)
-//            }
+                BottomNavigation(destinations = appState.destinationsList,
+                    onNavigateToDestination = appState::navigateToDestinationBottom,
+                    currentDestination = appState.currentDestination)
+            }
         },
     ) { padding ->
-        Column(
+        Row(
             Modifier
                 .fillMaxSize()
                 .padding(padding)
@@ -103,6 +105,20 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
                         WindowInsetsSides.Horizontal,
                     ),
                 ),
+        ) {
+            if (appState.shouldShowNavRail) {
+                BottomNavRail(
+                    destinations = appState.destinationsList,
+                    onNavigateToDestination = appState::navigateToDestinationBottom,
+                    currentDestination = appState.currentDestination,
+                    modifier = Modifier
+                        .safeDrawingPadding(),
+                )
+            }
+        }
+        Column(
+            Modifier
+                .fillMaxSize()
         ) {
             CustomNavHost(navController = navController)
         }
@@ -137,6 +153,38 @@ private fun BottomNavigation(
                 },
                 label = {Text(stringResource(destination.titleTextId))},
                 modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomNavRail(
+    destinations: List<Destinations>,
+    onNavigateToDestination: (Destinations) -> Unit,
+    currentDestination: NavDestination?,
+    modifier: Modifier = Modifier,
+) {
+    BottomNavigationRail(modifier = modifier) {
+        destinations.forEach { destination ->
+            val selected = currentDestination.isDestinationInHierarchy(destination)
+            BottomNavigationRailItem(
+                selected = selected,
+                onClick = { onNavigateToDestination(destination) },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = destination.unselectedIcon),
+                        contentDescription = null,
+                    )
+                },
+                selectedIcon = {
+                    Icon(
+                        painter = painterResource(id = destination.selectedIcon),
+                        contentDescription = null,
+                    )
+                },
+                label = { Text(stringResource(destination.titleTextId)) },
+                modifier = Modifier
             )
         }
     }

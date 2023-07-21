@@ -1,7 +1,5 @@
 package com.example.englishwordspetproject.screens
 
-import android.content.Context
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,14 +31,13 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass.Companion.Compact
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass.Companion.Medium
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -65,13 +64,14 @@ import com.example.englishwordspetproject.R
 import com.example.englishwordspetproject.data.viewModels.DictionaryViewModel
 import com.example.englishwordspetproject.data.viewModels.LanguageViewModel
 import com.example.englishwordspetproject.data.viewModels.WordStatus
+import com.example.englishwordspetproject.data.viewModels.cardTitles
 import com.example.englishwordspetproject.data.viewModels.sections
 import com.example.englishwordspetproject.data.viewModels.words
 import com.example.englishwordspetproject.data.viewModels.wordsMap
-import com.example.englishwordspetproject.ui.theme.in_progress_icon_color
-import com.example.englishwordspetproject.ui.theme.learned_icon_color
-import com.example.englishwordspetproject.ui.theme.new_word_icon_color
-import com.example.englishwordspetproject.utils.CalculatePaddings
+import com.example.englishwordspetproject.data.viewModels.wordsStatisticInDictionary
+import com.example.englishwordspetproject.ui.theme.in_progress_words_progress_color
+import com.example.englishwordspetproject.ui.theme.learned_words_progress_color
+import com.example.englishwordspetproject.ui.theme.new_words_progress_color
 import com.example.englishwordspetproject.utils.WindowSize
 
 
@@ -98,7 +98,8 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
     val mainColumnHorizontalPaddingValues = when(WindowSize.windowSizeClass?.widthSizeClass) {
         WindowWidthSizeClass.Compact -> 20.dp
         WindowWidthSizeClass.Medium -> 100.dp
-        else -> 400.dp
+        WindowWidthSizeClass.Expanded -> 400.dp
+        else -> 300.dp
     }
     
     Box(modifier = Modifier
@@ -107,12 +108,16 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
     ) {
         Column(
             modifier = Modifier
-                .padding(horizontal = mainColumnHorizontalPaddingValues, vertical = mainColumnVerticalPaddingValues)
-                .fillMaxSize()
-                .verticalScroll(scrollState, enabled = true),
+                .padding(
+                    horizontal = mainColumnHorizontalPaddingValues,
+                    vertical = mainColumnVerticalPaddingValues
+                )
+                .fillMaxSize(),
             horizontalAlignment = Start
         ) {
-            Row(modifier = Modifier.fillMaxWidth(),
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 30.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -123,17 +128,33 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
                 Button(onClick = { /*TODO*/ },
                        shape = RoundedCornerShape(20.dp)
                 ) {
+                    Icon(imageVector = Icons.Rounded.Edit, contentDescription = "")
                     Text(text = "Редактировать",
                         modifier = Modifier.padding(10.dp))
                 }
             }
 
-            Card(shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(10.dp),
-                modifier = Modifier.padding(top = 30.dp)
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState, enabled = true)
+                .padding(bottom = 50.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Все слова")
+
+                cardTitles.forEach {title ->
+                    DictionaryCard(title = stringResource(id = title))
+                }
             }
+
+//            if (WindowSize.windowSizeClass?.widthSizeClass == WindowWidthSizeClass.Expanded) {
+//                Row(modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween) {
+//                    DictionaryCard("Все слова")
+//                    DictionaryCard("Все слова")
+//                }
+//            } else {
+//                DictionaryCard("Все слова")
+//            }
 
 //            Surface(shape = RoundedCornerShape(20.dp),
 //                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
@@ -193,6 +214,48 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
 }
 
 @Composable
+fun DictionaryCard(title: String) {
+
+    Card(shape = RoundedCornerShape(10.dp),
+        elevation = CardDefaults.cardElevation(10.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground),
+        modifier = Modifier.padding(bottom = 30.dp)
+    ) {
+        Column(modifier = Modifier
+            .padding(20.dp)
+            .width(350.dp)
+        ){
+            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+
+            wordsStatisticInDictionary.entries.forEach { entry ->
+                val string = "${entry.value} ${stringResource(id = entry.key)}"
+                val decimalIndex = string.indexOf(char = string.find { it.isLetter() }!!)
+
+                val text = AnnotatedString(text = string,
+                    spanStyles = listOf(
+                        AnnotatedString.Range(SpanStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp), start = 0, end = decimalIndex)
+                    )
+                )
+
+                if (entry.key != R.string.all_words) {
+
+                    Text(text = text, modifier = Modifier.padding(top = 20.dp, bottom = 5.dp))
+                    LinearProgressIndicator(progress = entry.value.toFloat() / wordsStatisticInDictionary[R.string.all_words]!! ,
+                        color = when(entry.key) {
+                            R.string.new_word -> new_words_progress_color
+                            R.string.in_progress_word -> in_progress_words_progress_color
+                            R.string.learned_word -> learned_words_progress_color
+                            else -> MaterialTheme.colorScheme.onSurfaceVariant
+                        })
+                }
+
+            }
+        }
+    }
+}
+
+@Composable
 fun InDictionaryWordItem() {
     LazyHorizontalGrid(rows = GridCells.Adaptive(60.dp),
         verticalArrangement = Arrangement.Center,
@@ -214,44 +277,44 @@ fun InDictionaryWordItem() {
     }
 }
 
-@Composable
-fun WordsStatistic(context: Context, count: Int, @StringRes stringRes: Int) {
-    Row(horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth(0.45f)
-            .padding(top = 10.dp)
-    ) {
-        val string = "$count  ${context.getString(stringRes)}"
-
-        val decimalIndex = string.indexOf(char = string.find { it.isLetter() }!!)
-
-        val annotatedString = AnnotatedString(text = string,
-            spanStyles = listOf(
-                AnnotatedString.Range(SpanStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp), start = 0, end = decimalIndex)
-            ))
-
-        Text(text = annotatedString,
-            textAlign = TextAlign.Center,
-            fontSize = 18.sp)
-
-        Icon(painterResource(id = when(stringRes) {
-                                R.string.new_word -> R.drawable.new_word_icon
-                                R.string.in_progress_word -> R.drawable.in_progress_icon
-                                R.string.learned_word -> R.drawable.learned_icon
-                                else -> R.drawable.new_word_icon
-                            }),
-            contentDescription = stringResource(id = stringRes),
-            Modifier
-                .rotate(90f),
-            tint = when(stringRes) {
-                R.string.new_word -> new_word_icon_color
-                R.string.in_progress_word -> in_progress_icon_color
-                R.string.learned_word -> learned_icon_color
-                else -> MaterialTheme.colorScheme.onSecondaryContainer
-            })
-    }
-}
+//@Composable
+//fun WordsStatistic(context: Context, count: Int, @StringRes stringRes: Int) {
+//    Row(horizontalArrangement = Arrangement.SpaceBetween,
+//        verticalAlignment = Alignment.CenterVertically,
+//        modifier = Modifier
+//            .fillMaxWidth(0.45f)
+//            .padding(top = 10.dp)
+//    ) {
+//        val string = "$count  ${context.getString(stringRes)}"
+//
+//        val decimalIndex = string.indexOf(char = string.find { it.isLetter() }!!)
+//
+//        val annotatedString = AnnotatedString(text = string,
+//            spanStyles = listOf(
+//                AnnotatedString.Range(SpanStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp), start = 0, end = decimalIndex)
+//            ))
+//
+//        Text(text = annotatedString,
+//            textAlign = TextAlign.Center,
+//            fontSize = 18.sp)
+//
+//        Icon(painterResource(id = when(stringRes) {
+//                                R.string.new_word -> R.drawable.new_word_icon
+//                                R.string.in_progress_word -> R.drawable.in_progress_icon
+//                                R.string.learned_word -> R.drawable.learned_icon
+//                                else -> R.drawable.new_word_icon
+//                            }),
+//            contentDescription = stringResource(id = stringRes),
+//            Modifier
+//                .rotate(90f),
+//            tint = when(stringRes) {
+//                R.string.new_word -> new_word_icon_color
+//                R.string.in_progress_word -> in_progress_icon_color
+//                R.string.learned_word -> learned_icon_color
+//                else -> MaterialTheme.colorScheme.onSecondaryContainer
+//            })
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -371,17 +434,24 @@ fun ExpandedLanguageChooser(languageViewModel: LanguageViewModel) {
     }
 }
 
-@Preview(showBackground = true, device = Devices.PHONE)
+@Preview(name = "Phone", showBackground = true, device = Devices.PIXEL_4_XL)
 @Composable
 fun DictionaryScreenPreviewPhone() {
     DictionaryScreen()
 }
 
-@Preview(showBackground = true, device = Devices.TABLET)
+@Preview(name = "Tablet", showBackground = true, device = Devices.NEXUS_10)
 @Composable
 fun DictionaryScreenPreviewTablet() {
     DictionaryScreen()
 }
+
+//@Preview(showBackground = true, device = Devices.TV_1080p)
+//@Composable
+//fun DictionaryScreenPreviewTablet() {
+//    DictionaryScreen()
+//}
+
 fun inputTextValidation(inputText: String): Boolean {
     return inputText.all { it.isLetter() }
 }

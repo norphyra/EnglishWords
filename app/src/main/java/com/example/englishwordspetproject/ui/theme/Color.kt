@@ -24,19 +24,19 @@ val OnError = Color.White
 val Outline = Color(0xFF73796d)
 val OnOutline = Color(0xFFc4c8ba)
 
-val Surface = Color.White
-val OnSurface = Color(0xFF848c7c)
+val Surface = Color(0xFFf9f1de)
+val OnSurface = Color(0xFF1c1c16)
 
-val Background = Color(0xFFf9f1de)
+val Background = Color.White
 val OnBackground = Color(0xFF1c1c16)
 
 val SurfaceContainer = Color(0xFFedefe5)
 val OnSurfaceContainer = Color(0xFF848c7c)
 
 //Icons clors
-val new_word_icon_color = Color(0xFFc4bebe)
-val in_progress_icon_color = Color(0xFFf0e516)
-val learned_icon_color = Color(0xFFa1ed2f)
+val new_words_progress_color = Color(0xFFee6548)
+val in_progress_words_progress_color = Color(0xFFEEE626)
+val learned_words_progress_color = Color(0xFF9db482)
 
 @Composable
 fun CustomTextFieldColors() =  TextFieldDefaults.colors(errorTextColor = MaterialTheme.colorScheme.error,
