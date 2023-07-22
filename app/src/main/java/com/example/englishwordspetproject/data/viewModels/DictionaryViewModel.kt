@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 
 class DictionaryViewModel: BaseViewModel() {
-    private val _selectedItem = MutableStateFlow(Section(R.string.my_dictionary))
-    public val selectedItem: StateFlow<Section> = _selectedItem
+    private val _selectedTitle = MutableStateFlow("")
+    public val selectedTitle: StateFlow<String> = _selectedTitle
 
     private val _expanded= MutableStateFlow(false)
     public val expanded: StateFlow<Boolean> = _expanded
@@ -21,8 +21,8 @@ class DictionaryViewModel: BaseViewModel() {
     @OptIn(ExperimentalMaterial3Api::class)
     public var sheetState: SheetState = SheetState(true)
 
-    open public fun selectItem(item: Section) {
-        _selectedItem.value = item
+    open public fun selectedTitle(title: String) {
+        _selectedTitle.value = title
     }
 
     open public fun isExpand(isExpand: Boolean) {

@@ -1,10 +1,14 @@
 package com.example.englishwordspetproject.screens
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -80,7 +85,6 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
 
     val context = LocalContext.current
 
-    val selectedItem by dictionaryViewModel.selectedItem.collectAsState()
     val expanded by dictionaryViewModel.expanded.collectAsState()
 
     //val sheetState = rememberModalBottomSheetState()
@@ -142,7 +146,8 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
             ) {
 
                 cardTitles.forEach {title ->
-                    DictionaryCard(title = stringResource(id = title))
+                    DictionaryCard(title = stringResource(id = title),
+                        dictionaryViewModel = dictionaryViewModel)
                 }
             }
 
@@ -213,14 +218,19 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
     
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DictionaryCard(title: String) {
+fun DictionaryCard(title: String, dictionaryViewModel: DictionaryViewModel) {
 
     Card(shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(10.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.onBackground),
-        modifier = Modifier.padding(bottom = 30.dp)
+        modifier = Modifier.padding(bottom = 30.dp),
+        onClick = {
+            dictionaryViewModel.isExpand(true)
+            dictionaryViewModel.selectedTitle(title)
+        }
     ) {
         Column(modifier = Modifier
             .padding(20.dp)
@@ -319,47 +329,24 @@ fun InDictionaryWordItem() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CustomModalBottomSheet(dictionaryViewModel: DictionaryViewModel) {
+
+    val selectedTitle by dictionaryViewModel.selectedTitle.collectAsState()
+
     ModalBottomSheet(onDismissRequest = {dictionaryViewModel.isExpand(false)},
         sheetState = dictionaryViewModel.sheetState,
         modifier = Modifier
             .fillMaxWidth()
+            .fillMaxHeight(0.5f)
     ) {
-        Box(modifier = Modifier
-            .fillMaxSize(),
-            contentAlignment = Alignment.TopCenter
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(horizontal = 20.dp)
         ) {
-            Surface(shape = RoundedCornerShape(20.dp),
-                modifier = Modifier
-                    .padding(top = 40.dp, start = 50.dp, end = 50.dp)
-                    .fillMaxSize(),
-                shadowElevation = 10.dp
-            ) {
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 20.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    sections.filter { it.sectionName != dictionaryViewModel.selectedItem.value.sectionName }
-                        .forEach {
-
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 30.dp, end = 30.dp)
-                            ) {
-                                FilledTonalButton(onClick = {
-                                    dictionaryViewModel.selectItem(it)
-                                    dictionaryViewModel.isExpand(false) },
-                                    shape = RoundedCornerShape(10.dp)
-                                ) {
-                                    Text(text = stringResource(id = it.sectionName),
-                                        fontSize = 30.sp,
-                                        modifier = Modifier.fillMaxWidth())
-                                }
-                            }
-                        }
-                }
-            }
+            Text(text = selectedTitle,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold)
+            Divider()
         }
     }
 }
