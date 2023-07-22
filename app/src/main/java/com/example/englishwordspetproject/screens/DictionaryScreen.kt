@@ -1,8 +1,5 @@
 package com.example.englishwordspetproject.screens
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,29 +8,27 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -49,15 +44,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -69,10 +65,9 @@ import com.example.englishwordspetproject.R
 import com.example.englishwordspetproject.data.viewModels.DictionaryViewModel
 import com.example.englishwordspetproject.data.viewModels.LanguageViewModel
 import com.example.englishwordspetproject.data.viewModels.WordStatus
+import com.example.englishwordspetproject.data.viewModels.WordsWithTranslate
 import com.example.englishwordspetproject.data.viewModels.cardTitles
-import com.example.englishwordspetproject.data.viewModels.sections
 import com.example.englishwordspetproject.data.viewModels.words
-import com.example.englishwordspetproject.data.viewModels.wordsMap
 import com.example.englishwordspetproject.data.viewModels.wordsStatisticInDictionary
 import com.example.englishwordspetproject.ui.theme.in_progress_words_progress_color
 import com.example.englishwordspetproject.ui.theme.learned_words_progress_color
@@ -142,7 +137,7 @@ fun DictionaryScreen(dictionaryViewModel: DictionaryViewModel = viewModel()) {
                 .fillMaxSize()
                 .verticalScroll(scrollState, enabled = true)
                 .padding(bottom = 50.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = CenterHorizontally
             ) {
 
                 cardTitles.forEach {title ->
@@ -225,7 +220,7 @@ fun DictionaryCard(title: String, dictionaryViewModel: DictionaryViewModel) {
     Card(shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(10.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background,
-            contentColor = MaterialTheme.colorScheme.onBackground),
+                                         contentColor = MaterialTheme.colorScheme.onBackground),
         modifier = Modifier.padding(bottom = 30.dp),
         onClick = {
             dictionaryViewModel.isExpand(true)
@@ -253,7 +248,7 @@ fun DictionaryCard(title: String, dictionaryViewModel: DictionaryViewModel) {
                     Text(text = text, modifier = Modifier.padding(top = 20.dp, bottom = 5.dp))
                     LinearProgressIndicator(progress = entry.value.toFloat() / wordsStatisticInDictionary[R.string.all_words]!! ,
                         color = when(entry.key) {
-                            R.string.new_word -> new_words_progress_color
+                            R.string.new_words -> new_words_progress_color
                             R.string.in_progress_word -> in_progress_words_progress_color
                             R.string.learned_word -> learned_words_progress_color
                             else -> MaterialTheme.colorScheme.onSurfaceVariant
@@ -272,7 +267,7 @@ fun InDictionaryWordItem() {
         modifier = Modifier
             .heightIn(max = 80.dp)
     ) {
-        items(listOf(words[0].word, words[0].translate, words[0].status)) { item ->
+        items(listOf(words[0].original, words[0].translate, words[0].status)) { item ->
             if (item is WordStatus) {
                 Icon(painter = painterResource(id = when(item) {
                     WordStatus.New -> R.drawable.new_word_icon
@@ -336,54 +331,63 @@ private fun CustomModalBottomSheet(dictionaryViewModel: DictionaryViewModel) {
         sheetState = dictionaryViewModel.sheetState,
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.5f)
+            .fillMaxHeight(0.5f),
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 20.dp)
+            horizontalAlignment = CenterHorizontally,
+            modifier = Modifier.padding(horizontal = 40.dp)
         ) {
             Text(text = selectedTitle,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold)
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                fontStyle = FontStyle(R.font.noto_sans_cypro_minoan_regular))
             Divider()
+            DictionaryWordsList(words)
         }
     }
 }
 
 @Composable
-private fun DictionaryWordsList() {
+private fun DictionaryWordsList(words: List<WordsWithTranslate>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 30.dp)
     ) {
-        items(wordsMap.keys.toList()) {
-
-            FilledTonalButton(
-                onClick = { /*TODO*/ },
+        items(words.size) {index ->
+            Row(verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(10.dp),
-                elevation = ButtonDefaults.buttonElevation(4.dp)
+                    .padding(bottom = 10.dp)
             ) {
-                Text(
-                    text = it, textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            wordsMap[it]?.forEachIndexed { index, word ->
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.padding(10.dp)
+                Column(verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.width(200.dp)
                 ) {
-                    Text(text = word)
+                    Text(text = words[index].original,
+                        fontStyle = FontStyle(R.font.noto_sans_cypro_minoan_regular),
+                        fontSize = 20.sp)
+                    Text(text = words[index].translate,
+                        fontWeight = FontWeight.Light,
+                        fontStyle = FontStyle(R.font.noto_sans_cypro_minoan_regular),
+                        color = MaterialTheme.colorScheme.outline,
+                        fontSize = 16.sp)
                 }
-                if (index < (wordsMap[it]?.size?.minus(1) ?: 0)) {
-                    Divider()
-                }
+                Text(text = stringResource(id = words[index].status.stringRes),
+                    color = words[index].status.color,
+                    fontStyle = FontStyle(R.font.noto_sans_cypro_minoan_regular),
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center)
+
+                Icon(imageVector = Icons.Rounded.DeleteOutline,
+                    contentDescription = "delete",
+                    Modifier.size(24.dp))
             }
         }
     }
@@ -396,9 +400,9 @@ fun ExpandedLanguageChooser(languageViewModel: LanguageViewModel) {
     val languages = mapOf("English" to R.drawable.usa_flag_icon, "Russian" to R.drawable.russian_flag_icon)
 
     var expanded by rememberSaveable { mutableStateOf(false) }
-    var selectedLanguage by rememberSaveable { mutableStateOf("English") }
+    val selectedLanguage by rememberSaveable { mutableStateOf("English") }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
+    Column(horizontalAlignment = CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .padding(30.dp)

@@ -30,7 +30,7 @@ val OnSurface = Color(0xFF1c1c16)
 val Background = Color.White
 val OnBackground = Color(0xFF1c1c16)
 
-val SurfaceContainer = Color(0xFFedefe5)
+val SurfaceContainer = Color.White
 val OnSurfaceContainer = Color(0xFF848c7c)
 
 //Icons clors

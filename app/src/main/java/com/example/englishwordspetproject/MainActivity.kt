@@ -58,7 +58,6 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize(),
-                    color = MaterialTheme.colorScheme.surface
                 ) {
                     val windowSizeClass = calculateWindowSizeClass(this)
                     WindowSize.windowSizeClass = windowSizeClass

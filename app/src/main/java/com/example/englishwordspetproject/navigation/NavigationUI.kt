@@ -133,7 +133,7 @@ object NavigationDefaults {
     fun navigationUnselectedIconColor() = MaterialTheme.colorScheme.onSurfaceVariant
 
     @Composable
-    fun navigationIndicatorColor() = MaterialTheme.colorScheme.secondaryContainer
+    fun navigationIndicatorColor() = Color.White
 
     @Composable
     fun navigationContainerColor() = MaterialTheme.colorScheme.surfaceVariant

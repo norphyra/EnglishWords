@@ -7,7 +7,9 @@
 
     <string name="my_dictionary">Мой словарь</string>
     <string name="my_sets">Мои наборы</string>
-    <string name="new_word">новые</string>
+
+    <string name="new_words">новые</string>
+    <string name="new_word">новое</string>
     <string name="in_progress_word">изучаю</string>
     <string name="learned_word">изучено</string>
     <string name="all_words">всего слов</string>
