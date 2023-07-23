@@ -1,22 +1,13 @@
 package com.example.englishwordspetproject.utils
 
-import android.content.Context
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun Int.pxToDp() = with(LocalDensity.current) { this@pxToDp.toDp() }
-
-fun Context.getString(@StringRes resId: Int) = this.getString(resId)
 
 @Composable
 fun CalculatePaddings(screenHeight: Int, screenWidth: Int): Modifier {
@@ -36,8 +27,4 @@ fun CalculatePaddings(screenHeight: Int, screenWidth: Int): Modifier {
     }
 
     return Modifier.padding(top = top, bottom = bottom, start = start, end = end)
-}
-
-object WindowSize {
-    var windowSizeClass: WindowSizeClass? = null
 }

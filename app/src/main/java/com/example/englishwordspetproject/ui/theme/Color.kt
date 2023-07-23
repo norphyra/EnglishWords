@@ -5,7 +5,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-val Primary = Color(0xFFee6548)
+val Primary = Color(0xFF7e463e)
 val OnPrimary = Color.White
 val PrimaryContainer = Color(0xFFb8f397)
 val OnPrimaryContainer = Color(0xFF042100)
@@ -24,7 +24,7 @@ val OnError = Color.White
 val Outline = Color(0xFF73796d)
 val OnOutline = Color(0xFFc4c8ba)
 
-val Surface = Color(0xFFf9f1de)
+val Surface = Color.White
 val OnSurface = Color(0xFF1c1c16)
 
 val Background = Color.White
@@ -33,8 +33,8 @@ val OnBackground = Color(0xFF1c1c16)
 val SurfaceContainer = Color.White
 val OnSurfaceContainer = Color(0xFF848c7c)
 
-//Icons clors
-val new_words_progress_color = Color(0xFFee6548)
+//Icons colors
+val new_words_progress_color = Color(0xFFd6dbe1)
 val in_progress_words_progress_color = Color(0xFFEEE626)
 val learned_words_progress_color = Color(0xFF9db482)
 

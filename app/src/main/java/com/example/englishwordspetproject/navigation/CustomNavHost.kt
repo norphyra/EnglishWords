@@ -1,5 +1,6 @@
 package com.example.englishwordspetproject.navigation
 
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -13,8 +14,9 @@ import com.example.englishwordspetproject.screens.TrainingScreen
 @Composable
 fun CustomNavHost(
     modifier: Modifier = Modifier,
-    startDestination: String = Destinations.HOME.route,
-    navController: NavHostController
+    startDestination: String = Destinations.DICTIONARY.route,
+    navController: NavHostController,
+    windowSizeClass: WindowSizeClass
 ) {
     NavHost(
         navController = navController,
@@ -25,7 +27,7 @@ fun CustomNavHost(
 
         composable(route = Destinations.TRAINING.route) { TrainingScreen() }
 
-        composable(route = Destinations.DICTIONARY.route) { DictionaryScreen() }
+        composable(route = Destinations.DICTIONARY.route) { DictionaryScreen(windowSizeClass = windowSizeClass) }
 
         composable(route = Destinations.PROFILE.route) { ProfileScreen() }
     }

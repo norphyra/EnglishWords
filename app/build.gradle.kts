@@ -69,6 +69,7 @@ dependencies {
         implementation(navigation)
         implementation(icons)
         implementation(windowSizeClass)
+        implementation(util)
     }
 
     dep.di.apply {

@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 
 class DictionaryViewModel: BaseViewModel() {
-    private val _selectedTitle = MutableStateFlow("")
-    public val selectedTitle: StateFlow<String> = _selectedTitle
+    private val _selectedCardTitle = MutableStateFlow(CardTitle.AllWorlds)
+    public val selectedTitle: StateFlow<CardTitle> = _selectedCardTitle
 
     private val _expanded= MutableStateFlow(false)
     public val expanded: StateFlow<Boolean> = _expanded
@@ -22,8 +22,8 @@ class DictionaryViewModel: BaseViewModel() {
     @OptIn(ExperimentalMaterial3Api::class)
     public var sheetState: SheetState = SheetState(true)
 
-    open public fun selectedTitle(title: String) {
-        _selectedTitle.value = title
+    open public fun selectedTitle(cardTitle: CardTitle) {
+        _selectedCardTitle.value = cardTitle
     }
 
     open public fun isExpand(isExpand: Boolean) {
@@ -57,12 +57,20 @@ val words = listOf(WordsWithTranslate("cat", "кошка", WordStatus.New),
     WordsWithTranslate("fish", "рыба", WordStatus.InProgress),
     WordsWithTranslate("illusion", "иллюзия", WordStatus.Learned))
 
-val cardTitles = listOf(R.string.all_words_title, R.string.nouns_title, R.string.verbs_title,
-R.string.adjectives_title, R.string.adverb_title, R.string.numerals_title)
-
 enum class WordStatus(val color: Color, @StringRes val stringRes: Int) {
     New(new_words_progress_color, R.string.new_word),
     InProgress(in_progress_words_progress_color, R.string.in_progress_word),
     Learned(learned_words_progress_color, R.string.learned_word)
 }
+
+enum class CardTitle(@StringRes val title: Int) {
+    AllWorlds(R.string.all_words_title),
+    Nouns(R.string.nouns_title),
+    Verbs(R.string.verbs_title),
+    Adjectives(R.string.adjectives_title),
+    Adverb(R.string.adverb_title),
+    Numerals(R.string.numerals_title)
+}
+
+
 

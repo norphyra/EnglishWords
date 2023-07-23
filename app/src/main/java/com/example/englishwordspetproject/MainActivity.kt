@@ -40,7 +40,6 @@ import com.example.englishwordspetproject.navigation.BottomNavigationRailItem
 import com.example.englishwordspetproject.navigation.CustomNavHost
 import com.example.englishwordspetproject.navigation.Destinations
 import com.example.englishwordspetproject.ui.theme.EnglishWordspetProjectTheme
-import com.example.englishwordspetproject.utils.WindowSize
 
 class MainActivity : ComponentActivity() {
 
@@ -60,7 +59,6 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize(),
                 ) {
                     val windowSizeClass = calculateWindowSizeClass(this)
-                    WindowSize.windowSizeClass = windowSizeClass
 
                     MainScreen(windowSizeClass)
                 }
@@ -119,7 +117,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
             Modifier
                 .fillMaxSize()
         ) {
-            CustomNavHost(navController = navController)
+            CustomNavHost(navController = navController, windowSizeClass = windowSizeClass)
         }
     }
 }
