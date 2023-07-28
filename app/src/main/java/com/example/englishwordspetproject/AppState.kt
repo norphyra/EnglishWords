@@ -1,9 +1,11 @@
 package com.example.englishwordspetproject
 
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -55,5 +57,17 @@ class AppState(
             // Restore state when reselecting a previously selected item
             restoreState = true
         }
+    }
+
+    val mainColumnVerticalPaddingValues = when(windowSizeClass.heightSizeClass) {
+        WindowHeightSizeClass.Compact -> 10.dp
+        else -> 30.dp
+    }
+
+    val mainColumnHorizontalPaddingValues = when(windowSizeClass.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> 20.dp
+        WindowWidthSizeClass.Medium -> 100.dp
+        WindowWidthSizeClass.Expanded -> 400.dp
+        else -> 300.dp
     }
 }

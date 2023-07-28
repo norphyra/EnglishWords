@@ -73,7 +73,7 @@ fun RowScope.BottomNavigationBarItem(
  */
 
 @Composable
-fun BottomNavigationRailItem(
+fun SideNavigationRailItem(
     selected: Boolean,
     onClick: () -> Unit,
     icon: @Composable () -> Unit,
@@ -111,7 +111,7 @@ fun BottomNavigationRailItem(
  */
 
 @Composable
-fun BottomNavigationRail(
+fun SideNavigationRail(
     modifier: Modifier = Modifier,
     header: @Composable (ColumnScope.() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,

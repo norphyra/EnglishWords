@@ -1,11 +1,10 @@
-package com.example.englishwordspetproject.data.viewModels
+package com.example.englishwordspetproject.data.viewModel
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.englishwordspetproject.Dictionary.DictionaryViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.Objects
 import javax.inject.Inject
 
 open class BaseViewModel: ViewModel() {
@@ -27,7 +26,6 @@ class ViewModelFactory @Inject constructor(): ViewModelProvider.Factory {
 
         return when(modelClass) {
             DictionaryViewModel::class.java -> DictionaryViewModel()
-            LanguageViewModel::class.java -> LanguageViewModel()
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         } as T
     }

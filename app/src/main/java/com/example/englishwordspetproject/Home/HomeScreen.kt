@@ -1,4 +1,4 @@
-package com.example.englishwordspetproject.screens
+package com.example.englishwordspetproject.Home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview

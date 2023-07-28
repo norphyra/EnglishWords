@@ -1,10 +1,12 @@
-package com.example.englishwordspetproject.data.viewModels
+package com.example.englishwordspetproject.Dictionary
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.ui.graphics.Color
 import com.example.englishwordspetproject.R
+import com.example.englishwordspetproject.data.viewModel.BaseViewModel
 import com.example.englishwordspetproject.ui.theme.in_progress_words_progress_color
 import com.example.englishwordspetproject.ui.theme.learned_words_progress_color
 import com.example.englishwordspetproject.ui.theme.new_words_progress_color
@@ -52,10 +54,12 @@ val wordsStatisticInDictionary = mapOf<@receiver:StringRes Int, Int>(
     R.string.all_words to 548
 )
 
-val words = listOf(WordsWithTranslate("cat", "кошка", WordStatus.New),
+val words = listOf(
+    WordsWithTranslate("cat", "кошка", WordStatus.New),
     WordsWithTranslate("dog", "собака", WordStatus.New),
     WordsWithTranslate("fish", "рыба", WordStatus.InProgress),
-    WordsWithTranslate("illusion", "иллюзия", WordStatus.Learned))
+    WordsWithTranslate("illusion", "иллюзия", WordStatus.Learned)
+)
 
 enum class WordStatus(val color: Color, @StringRes val stringRes: Int) {
     New(new_words_progress_color, R.string.new_word),
@@ -63,14 +67,16 @@ enum class WordStatus(val color: Color, @StringRes val stringRes: Int) {
     Learned(learned_words_progress_color, R.string.learned_word)
 }
 
-enum class CardTitle(@StringRes val title: Int) {
-    AllWorlds(R.string.all_words_title),
-    Nouns(R.string.nouns_title),
-    Verbs(R.string.verbs_title),
-    Adjectives(R.string.adjectives_title),
-    Adverb(R.string.adverb_title),
-    Numerals(R.string.numerals_title)
+enum class CardTitle(@StringRes val title: Int, @DrawableRes val icon: Int) {
+    AllWorlds(R.string.all_words_title, R.drawable.all_words_icon),
+    Nouns(R.string.nouns_title, R.drawable.nouns_icon),
+    Verbs(R.string.verbs_title, R.drawable.verbs_icon),
+    Adjectives(R.string.adjectives_title, R.drawable.adjectives_icon),
+    Adverb(R.string.adverbs_title, R.drawable.adverbs_icon),
+    Numerals(R.string.numerals_title, R.drawable.numerals_icon)
 }
+
+val cardGridTitles = listOf("Тренировать", "Редактировать набор", "Найти слово", "Добавить слова")
 
 
 

@@ -5,17 +5,10 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,16 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.rememberNavController
 import com.example.englishwordspetproject.DI.appComponent
 import com.example.englishwordspetproject.navigation.BottomNavigationBar
 import com.example.englishwordspetproject.navigation.BottomNavigationBarItem
-import com.example.englishwordspetproject.navigation.BottomNavigationRail
-import com.example.englishwordspetproject.navigation.BottomNavigationRailItem
 import com.example.englishwordspetproject.navigation.CustomNavHost
 import com.example.englishwordspetproject.navigation.Destinations
+import com.example.englishwordspetproject.navigation.SideNavigationRail
+import com.example.englishwordspetproject.navigation.SideNavigationRailItem
 import com.example.englishwordspetproject.ui.theme.EnglishWordspetProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -57,6 +51,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize(),
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     val windowSizeClass = calculateWindowSizeClass(this)
 
@@ -69,7 +64,6 @@ class MainActivity : ComponentActivity() {
 
 //viewModelStoreOwner: ViewModelStoreOwner
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(windowSizeClass: WindowSizeClass) {
 
@@ -83,6 +77,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onSurface,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {},
         bottomBar = {
             if (appState.shouldShowBottomBar) {
 
@@ -92,19 +87,14 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
             }
         },
     ) { padding ->
-        Row(
+        Column(
             Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .consumeWindowInsets(padding)
-                .windowInsetsPadding(
-                    WindowInsets.safeDrawing.only(
-                        WindowInsetsSides.Horizontal,
-                    ),
-                ),
         ) {
-            if (appState.shouldShowNavRail) {
-                BottomNavRail(
+            if (appState.shouldShowNavRail
+            ) {
+                SideNavRail(
                     destinations = appState.destinationsList,
                     onNavigateToDestination = appState::navigateToDestinationBottom,
                     currentDestination = appState.currentDestination,
@@ -112,12 +102,15 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
                         .safeDrawingPadding(),
                 )
             }
-        }
-        Column(
-            Modifier
-                .fillMaxSize()
-        ) {
-            CustomNavHost(navController = navController, windowSizeClass = windowSizeClass)
+            CustomNavHost(navController = navController,
+                modifier = Modifier
+                    .padding(
+                        top = appState.mainColumnVerticalPaddingValues,
+                        bottom = if (appState.shouldShowBottomBar) 0.dp else appState.mainColumnVerticalPaddingValues,
+                        start = appState.mainColumnHorizontalPaddingValues,
+                        end = appState.mainColumnHorizontalPaddingValues
+                    )
+            )
         }
     }
 }
@@ -156,16 +149,16 @@ private fun BottomNavigation(
 }
 
 @Composable
-private fun BottomNavRail(
+private fun SideNavRail(
     destinations: List<Destinations>,
     onNavigateToDestination: (Destinations) -> Unit,
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
-    BottomNavigationRail(modifier = modifier) {
+    SideNavigationRail(modifier = modifier) {
         destinations.forEach { destination ->
             val selected = currentDestination.isDestinationInHierarchy(destination)
-            BottomNavigationRailItem(
+            SideNavigationRailItem(
                 selected = selected,
                 onClick = { onNavigateToDestination(destination) },
                 icon = {
