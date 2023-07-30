@@ -1,9 +1,8 @@
 package com.example.englishwordspetproject.Training
 
-import androidx.annotation.FloatRange
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.text.AnnotatedString
 import com.example.englishwordspetproject.data.viewModel.BaseViewModel
 
 class TrainingViewModel: BaseViewModel() {
@@ -14,11 +13,12 @@ val exercises = listOf("Слово-перевод", "Найди пару", "Сп
 data class TrainingWordInformation(
     val translate: String,
     var targetRect: Rect = Rect(0f, 0f, 0f, 0f),
-    var currentRect: Rect = Rect(0f, 0f, 0f, 0f)
+    var currentRect: Rect = Rect(0f, 0f, 0f, 0f),
+    var isCoincidence : MutableState<Boolean> = mutableStateOf(false)
 ) {
 
-    public fun coincidence(): Boolean {
-        return targetRect.overlaps(currentRect)
+    public fun coincidence() {
+        isCoincidence.value = (targetRect.top < currentRect.top) && (targetRect.bottom > currentRect.bottom)
     }
 }
 
