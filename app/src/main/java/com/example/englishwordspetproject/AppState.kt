@@ -15,7 +15,7 @@ import com.example.englishwordspetproject.navigation.Destinations
 @Stable
 class AppState(
     private val navController: NavHostController,
-    private val windowSizeClass: WindowSizeClass,
+    public val windowSizeClass: WindowSizeClass,
 ) {
     val currentDestination: NavDestination?
         @Composable get() = navController

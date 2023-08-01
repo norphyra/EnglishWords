@@ -3,31 +3,28 @@ package com.example.englishwordspetproject.Training
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.example.englishwordspetproject.Training.exercises.find_pair.DraggableItemState
+import com.example.englishwordspetproject.Training.exercises.find_pair.SurfaceState
 import com.example.englishwordspetproject.data.viewModel.BaseViewModel
 
 class TrainingViewModel: BaseViewModel() {
+
+    val trainingWords = mapOf(
+        "cat" to TrainingWordsInfo("кошка", DraggableItemState()),
+        "dog" to TrainingWordsInfo("собака", DraggableItemState()),
+        "frog" to TrainingWordsInfo("лягушка", DraggableItemState()),
+        "train" to TrainingWordsInfo("поезд", DraggableItemState()),
+        "umbrella" to TrainingWordsInfo("зонт", DraggableItemState()),
+        "aaaaaaaaaaaaaaaa" to TrainingWordsInfo("aaaaaaaaaaaaaaaa", DraggableItemState())
+    )
+
 }
+
+class TrainingWordsInfo(
+    val translate: String,
+    val state: DraggableItemState
+)
 
 val exercises = listOf("Слово-перевод", "Найди пару", "Спринт", "Собери слово")
-
-data class TrainingWordInformation(
-    val translate: String,
-    var targetRect: Rect = Rect(0f, 0f, 0f, 0f),
-    var currentRect: Rect = Rect(0f, 0f, 0f, 0f),
-    var isCoincidence : MutableState<Boolean> = mutableStateOf(false)
-) {
-
-    public fun coincidence() {
-        isCoincidence.value = (targetRect.top < currentRect.top) && (targetRect.bottom > currentRect.bottom)
-    }
-}
-
-
-
-val trainingWords = mapOf(
-    "cat" to TrainingWordInformation("кошка"),
-    "dog" to TrainingWordInformation("собака"),
-    "frog" to TrainingWordInformation("лягушка"),
-    "train" to TrainingWordInformation("поезд"),
-    "umbrella" to TrainingWordInformation("зонт")
-)

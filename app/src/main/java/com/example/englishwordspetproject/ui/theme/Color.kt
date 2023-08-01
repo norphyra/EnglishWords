@@ -47,6 +47,11 @@ val fourthCard = Color(0xFF9eaffd)
 
 val gridCardColors = listOf(firstCard, secondCard, thirdCard, fourthCard)
 
+//Games colors
+
+//Find Pair
+val DraggableItemColor = Color(0xFFE8E8E8)
+
 @Composable
 fun CustomTextFieldColors() =  TextFieldDefaults.colors(errorTextColor = MaterialTheme.colorScheme.error,
     errorLeadingIconColor = MaterialTheme.colorScheme.error,
