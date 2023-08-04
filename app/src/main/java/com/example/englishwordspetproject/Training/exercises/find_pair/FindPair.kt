@@ -1,9 +1,8 @@
 package com.example.englishwordspetproject.Training.exercises.find_pair
 
 import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.animateRect
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,12 +28,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
@@ -100,7 +102,9 @@ fun FindPair() {
                     .border(
                         BorderStroke(
                             2.dp,
-                            color = if (trainingViewModel.trainingWords[word]?.state?.isCoincidence?.value ?: false == true) Color.Green else Color.DarkGray
+                            color = if ((trainingViewModel.trainingWords[word]?.state?.isCoincidence?.value
+                                    ?: false) == true
+                            ) Color.Green else Color.LightGray
                         )
                     )
                     .fillMaxHeight()
@@ -121,6 +125,7 @@ fun FindPair() {
         }
 
         ListDraggableWords(items = trainingViewModel.trainingWords.values.toList(),
+            trainingViewModel = trainingViewModel,
             modifier = Modifier.padding(top = 20.dp),
             fontSize = 16.sp,
             horizontalTextPadding = 12.dp,
@@ -135,6 +140,7 @@ fun FindPair() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ListDraggableWords(items: List<TrainingWordsInfo>,
+                       trainingViewModel: TrainingViewModel,
                        modifier: Modifier = Modifier,
                        horizontalTextPadding: Dp,
                        verticalTextPadding: Dp,
@@ -147,25 +153,37 @@ fun ListDraggableWords(items: List<TrainingWordsInfo>,
     FlowRow(modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(horizontalSpace)) {
         
-        items.forEach {item ->
+        items.forEachIndexed { index, item ->
 
             val surfaceTransition = updateTransition(item.state.surfaceState, label = "surface state")
 
             val elevationTransition = updateTransition(item.state.isDragging, label = "drag state")
 
-            val roundedCornerRadius by surfaceTransition.animateDp(label = "rounded corner radius")
-                {state ->
-                    when (state.value) {
-                        SurfaceState.Normal -> 20.dp
-                        SurfaceState.Expanded -> 0.dp
-                    } }
+            val rectAnimation by surfaceTransition.animateRect(label = "animate rect",
+                transitionSpec = { tween(500) }) { state ->
+                when(state.value) {
+                    SurfaceState.Normal -> Rect(0f, 0f, 0f, 0f)
+                    SurfaceState.Expanded -> Rect(Offset(item.state.targetRect.topLeft.x, item.state.targetRect.topLeft.y),
+                        Size(item.state.targetRect.width - 50, item.state.targetRect.height - 50)
+                    )
+                }
+            }
+
+            val roundedCornerRadiusAnimation by surfaceTransition.animateDp(label = "rounded corner radius",
+                transitionSpec = { tween(100, 500) })
+            {state ->
+                when (state.value) {
+                    SurfaceState.Normal -> 40.dp
+                    SurfaceState.Expanded -> 0.dp
+                } }
 
             val elevation by elevationTransition.animateDp(label = "elevation")
             { isDragging ->
                 if (isDragging.value) 8.dp else 0.dp
             }
 
-            Surface(shape = RoundedCornerShape(roundedCornerRadius),
+
+            Surface(shape = RoundedCornerShape(40.dp),
                     color = DraggableItemColor,
                     shadowElevation = elevation,
                     modifier = Modifier
@@ -179,37 +197,56 @@ fun ListDraggableWords(items: List<TrainingWordsInfo>,
                         .padding(top = verticalSpace)
                         .height(itemHeight)
                         .pointerInput(Unit) {
-
                             detectDragGestures(
                                 onDragStart = {
-                                    item.state.isDragging.value = true
+                                    if (item.state.isCoincidence.value) {
+                                        return@detectDragGestures
+                                    }
+
+                                    item.state.startDrag(trainingViewModel)
+                                    
                                 },
                                 onDragEnd = {
                                     item.state.coincidence()
                                     if (item.state.isCoincidence.value) {
                                         item.state.surfaceState.value = SurfaceState.Expanded
-                                        item.state.isDragging.value = false
 
-                                        item.state.offsetX.value += item.state.targetRect.center.x - item.state.currentRect.center.x
-                                        item.state.offsetY.value += item.state.targetRect.center.y - item.state.currentRect.center.y
+                                        item.state.cancelDrag()
+
+                                        item.state.shiftToTargetRectCenter()
                                     }
                                 }) { change, dragAmount ->
-                                if (item.state.isCoincidence.value) {
-                                    item.state.surfaceState.value = SurfaceState.Expanded
-                                    return@detectDragGestures
-                                }
-                                change.consume()
-                                item.state.offsetX.value += dragAmount.x
-                                item.state.offsetY.value += dragAmount.y
+                                        if (item.state.isCoincidence.value) {
+                                            item.state.zIndex = 0f
+                                            item.state.surfaceState.value = SurfaceState.Expanded
+                                            return@detectDragGestures
+                                        }
+                                        change.consume()
+                                        item.state.offsetX.value += dragAmount.x
+                                        item.state.offsetY.value += dragAmount.y
                             }
                         }
                         .onGloballyPositioned { coordinates ->
                             item.state.currentRect = coordinates.boundsInWindow()
                         }
+                        .drawWithCache {
+                            onDrawBehind {
+                                drawRoundRect(
+                                    color = DraggableItemColor,
+                                    size = rectAnimation.size,
+                                    topLeft = item.state.calculateOffset(rectAnimation = rectAnimation),
+                                    cornerRadius = CornerRadius(
+                                        x = roundedCornerRadiusAnimation.value * 1.5f,
+                                        y = roundedCornerRadiusAnimation.value * 1.5f
+                                    )
+                                )
+                            }
+                        }
                 ) {
                     Column(
                         horizontalAlignment = CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
                     ) {
                         Text(text = item.translate,
                             textAlign = TextAlign.Center,
