@@ -5,10 +5,12 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -71,8 +73,6 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
 
     val appState = AppState(navController, windowSizeClass)
 
-    Log.d("MainActivity", "shouldShowBottomBar: ${appState.shouldShowBottomBar} ")
-
     Scaffold(
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onSurface,
@@ -122,28 +122,33 @@ private fun BottomNavigation(
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
-    BottomNavigationBar(modifier = modifier
-    ) {
-        destinations.forEach {destination ->
-            val selected = currentDestination.isDestinationInHierarchy(destination)
 
-            BottomNavigationBarItem(selected = selected,
-                onClick = { onNavigateToDestination(destination) },
-                icon = {
-                    Icon(
-                        painter = painterResource(id = destination.unselectedIcon),
-                        contentDescription = null,
-                    )
-                },
-                selectedIcon = {
-                    Icon(
-                        painter = painterResource(id = destination.selectedIcon),
-                        contentDescription = null,
-                    )
-                },
-                label = {Text(stringResource(destination.titleTextId))},
-                modifier = modifier
-            )
+    Surface(shadowElevation = 12.dp,
+        shape = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp)
+    ) {
+        BottomNavigationBar(modifier = modifier
+        ) {
+            destinations.forEach {destination ->
+                val selected = currentDestination.isDestinationInHierarchy(destination)
+
+                BottomNavigationBarItem(selected = selected,
+                    onClick = { onNavigateToDestination(destination) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = destination.unselectedIcon),
+                            contentDescription = null,
+                        )
+                    },
+                    selectedIcon = {
+                        Icon(
+                            painter = painterResource(id = destination.selectedIcon),
+                            contentDescription = null,
+                        )
+                    },
+                    label = {Text(stringResource(destination.titleTextId))},
+                    modifier = modifier
+                )
+            }
         }
     }
 }

@@ -7,12 +7,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.englishwordspetproject.Training.TrainingViewModel
 
 @Composable
 fun rememberDraggableItemState() = DraggableItemState()
 
-class DraggableItemState {
+class DraggableItemState() {
 
     public var targetRect: Rect = Rect(0f, 0f, 0f, 0f)
     public var currentRect: Rect = Rect(0f, 0f, 0f, 0f)

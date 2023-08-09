@@ -25,4 +25,5 @@
     <string name="supporting_error_text_search">Введите только буквы</string>
 
     <string name="empty_string" />
+    <string name="continue_button">Продолжить</string>
 </resources>
