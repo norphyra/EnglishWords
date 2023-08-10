@@ -110,6 +110,8 @@ fun FindPair() {
         horizontalAlignment = CenterHorizontally
     ) {
 
+        val height = listOf(95.dp, 135.dp, 155.dp, 90.dp, 115.dp, 90.dp)
+
         LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(150.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalItemSpacing = 20.dp,
@@ -123,34 +125,45 @@ fun FindPair() {
 
 //                val height = Random.nextInt(IntRange(80, 120)).dp
 
-                val height = listOf(95.dp, 135.dp, 120.dp, 90.dp, 125.dp, 115.dp)
-
                 Surface(shape = RoundedCornerShape(10.dp),
                     shadowElevation = 8.dp,
-                    modifier = Modifier.height(height[index])) {
+                    modifier = Modifier.height(height[index]),
+                    color = Color(0xFFFFF8E8)) {
                     Column(horizontalAlignment = CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight(),
                     ) {
+
+                        val surfaceTransition = updateTransition(item.value.state.surfaceState, label = "surface state")
+
+                        val colorAnimation by surfaceTransition.animateColor(label = "color animation",
+                            transitionSpec = { tween(300) }
+                        ) { state ->
+                            when (state.value) {
+                                SurfaceState.Normal -> Color.White
+                                SurfaceState.Expanded -> Color(0xFFFFF8E8)
+                            }
+                        }
+
                         Text(
                             text = item.key,
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 20.dp)
+                            modifier = Modifier.padding(bottom = height[index] * 0.1f)
                         )
 
                         Canvas(modifier = Modifier
                             .fillMaxWidth(0.7f)
-                            .height(30.dp)
+                            .height(height[index] * 0.3f)
                             .onGloballyPositioned {coordinates ->
                                 item.value.state.targetRect = coordinates.boundsInWindow()
                             }
-                            .border(1.dp, Color.Black, RoundedCornerShape(20.dp))
+                            .border(1.dp, colorAnimation, RoundedCornerShape(20.dp))
                         ) {
                             drawRoundRect(
-                                color = Color(0xFFFFF8E8),
+                                color = Color.White,
                                 size = Size(size.width, size.height),
                                 cornerRadius = CornerRadius(
                                     x = 40f,
@@ -158,18 +171,6 @@ fun FindPair() {
                                 )
                             )
                         }
-
-//                        OutlinedButton(
-//                            onClick = { /*TODO*/ },
-//                            modifier = Modifier
-//                                .height(30.dp)
-//                                .fillMaxWidth(0.7f)
-//                                .onGloballyPositioned {coordinates ->
-//                                    item.value.state.targetRect = coordinates.boundsInWindow()
-//                                }
-//                        ) {
-//
-//                        }
                     }
                 }
             }
@@ -177,11 +178,11 @@ fun FindPair() {
 
         ListDraggableWords(words = words.values.toList(),
             trainingViewModel = trainingViewModel,
-            horizontalTextPadding = 12.dp,
+            horizontalTextPadding = 10.dp,
             verticalTextPadding = 4.dp,
             verticalSpace = 10.dp,
             horizontalSpace = 10.dp,
-            itemHeight = 40.dp,
+            itemHeight = height.min() * 0.3f,
             maxWidthSurface = maxWidthSurface)
 
         Row(horizontalArrangement = Arrangement.Center,
@@ -289,7 +290,7 @@ fun DraggableItem(word: TrainingWordsInfo,
     }
 
     Surface(shape = RoundedCornerShape(40.dp),
-        color = Color(0xFFFFF8E8).copy(alpha = 0.5f),
+        color = Color(0xFFFFF8E8),
         shadowElevation = elevation,
         modifier = Modifier
             .offset {
@@ -301,7 +302,6 @@ fun DraggableItem(word: TrainingWordsInfo,
             .zIndex(word.state.zIndex)
             .padding(top = verticalSpace)
             .height(itemHeight)
-//            .widthIn(min = 0.dp, max = (word.state.targetRect.width * 0.3f).dp)
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = {
@@ -359,7 +359,7 @@ fun DraggableItem(word: TrainingWordsInfo,
             AutoResizeText(text = word.translate,
                 textAlign = TextAlign.Center,
                 fontSizeRange = FontSizeRange(
-                    min = 8.sp,
+                    min = 5.sp,
                     max = 20.sp
                 ),
                 maxLines = 1,

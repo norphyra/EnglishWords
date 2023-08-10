@@ -27,7 +27,8 @@ class DraggableItemState() {
 
 
     public fun coincidence() {
-        isCoincidence.value = (targetRect.top < currentRect.top) && (targetRect.bottom > currentRect.bottom)
+        isCoincidence.value = (targetRect.center.y - currentRect.center.y < 0.5f) || (targetRect.center.x - currentRect.center.x < 0.5f)
+//        isCoincidence.value = (targetRect.top < currentRect.top) && (targetRect.bottom > currentRect.bottom)
     }
 
     public fun calculateOffset(rectAnimation: Rect) = Offset(- (rectAnimation.width - currentRect.width) / 2,
